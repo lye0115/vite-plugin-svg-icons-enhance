@@ -11,15 +11,21 @@ dependencies:
   '@svgr/plugin-jsx':
     specifier: 8.1.0
     version: 8.1.0(@svgr/core@8.1.0)
-  '@svgr/plugin-prettier':
-    specifier: 8.1.0
-    version: 8.1.0(@svgr/core@8.1.0)
   '@svgr/plugin-svgo':
     specifier: 8.1.0
     version: 8.1.0(@svgr/core@8.1.0)(typescript@5.5.4)
+  chalk:
+    specifier: ^5.4.1
+    version: 5.4.1
   esbuild:
     specifier: '>=0.25.0'
     version: 0.25.2
+  react:
+    specifier: '>=18.0.0'
+    version: 19.1.0
+  svgo:
+    specifier: ^3.3.2
+    version: 3.3.2
   vite:
     specifier: '>=5.0.0'
     version: 6.3.0(@types/node@22.9.0)
@@ -712,17 +718,6 @@ packages:
       - supports-color
     dev: false
 
-  /@svgr/plugin-prettier@8.1.0(@svgr/core@8.1.0):
-    resolution: {integrity: sha512-o4/uFI8G64tAjBZ4E7gJfH+VP7Qi3T0+M4WnIsP91iFnGPqs5WvPDkpZALXPiyWEtzfYs1Rmwy1Zdfu8qoZuKw==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      '@svgr/core': '*'
-    dependencies:
-      '@svgr/core': 8.1.0(typescript@5.5.4)
-      deepmerge: 4.3.1
-      prettier: 2.8.8
-    dev: false
-
   /@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0)(typescript@5.5.4):
     resolution: {integrity: sha512-Ywtl837OGO9pTLIN/onoWLmDQ4zFUycI1g76vuKGEz6evR/ZTJlJuz3G/fIkb6OVBJ2g0o6CGJzaEjfmEo3AHA==}
     engines: {node: '>=14'}
@@ -832,6 +827,11 @@ packages:
 
   /caniuse-lite@1.0.30001714:
     resolution: {integrity: sha512-mtgapdwDLSSBnCI3JokHM7oEQBLxiJKVRtg10AxM1AyeiKcM96f0Mkbqeq+1AbiCtvMcHRulAAEMu693JrSWqg==}
+    dev: false
+
+  /chalk@5.4.1:
+    resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
     dev: false
 
   /chokidar@4.0.3:
@@ -1329,16 +1329,15 @@ packages:
       source-map-js: 1.2.1
     dev: false
 
-  /prettier@2.8.8:
-    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
-    engines: {node: '>=10.13.0'}
-    hasBin: true
-    dev: false
-
   /punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
     dev: true
+
+  /react@19.1.0:
+    resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
+    engines: {node: '>=0.10.0'}
+    dev: false
 
   /readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}

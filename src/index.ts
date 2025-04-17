@@ -1,17 +1,35 @@
-import { Plugin, transformWithEsbuild } from "vite";
-import fs, { readdirSync } from "fs";
-import { resolve, relative } from "path";
-import { transform } from "@svgr/core";
+import { Plugin, transformWithEsbuild } from 'vite';
+import fs, { readdirSync } from 'fs';
+import { resolve, relative } from 'path';
+import { transform } from '@svgr/core';
+import chalk from 'chalk';
+import { Config } from 'svgo';
 
 interface SvgIconsPluginOptions {
-  // SVG 文件所在的目录
   dir: string;
+  log?: boolean;
+  svgoOptions?: Config['plugins'];
 }
 
-const virtualModuleId = "virtual:svg-icons";
+const virtualModuleId = 'virtual:svg-icons-enhance';
 
 // 虚拟模块的ID,vite
-const resolvedVirtualModuleId = "\0" + virtualModuleId;
+const resolvedVirtualModuleId = '\0' + virtualModuleId;
+
+const globalOptions: SvgIconsPluginOptions = {
+  dir: '',
+  log: false,
+  svgoOptions: [
+    {
+      name: 'preset-default',
+      params: {
+        overrides: {
+          removeViewBox: false,
+        },
+      },
+    },
+  ],
+} as SvgIconsPluginOptions;
 
 /**
  * 递归扫描指定目录及其子目录下的所有 SVG 文件
@@ -28,84 +46,79 @@ function scanSvgFiles(dir: string): string[] {
       const fullPath = resolve(directory, entry.name);
       if (entry.isDirectory()) {
         scan(fullPath);
-      } else if (entry.isFile() && entry.name.endsWith(".svg")) {
+      } else if (entry.isFile() && entry.name.endsWith('.svg')) {
         results.push(fullPath);
       }
     }
   }
 
   scan(dir);
-  console.info(
-    `[vite-plugin-svg-icons-enhance] 一共扫描到的svg文件${results.length}个svg资源`
-  );
+  // 修改 chalk 的使用方式
+  globalOptions.log && console.log(chalk.red(`[vite-plugin-svg-icons-enhance] found ${results.length} svg resources`));
   return results;
 }
 
 /**
- * 为给定的 SVG 文件列表生成虚拟模块的导出代码
+ * generate svg virtual module
  */
-async function generateExports(
-  svgFiles: string[],
-  rootDir: string
-): Promise<string> {
-  // 直接使用对象存储组件
-  const iconsObj: Record<string, string> = {};
+async function generateExports(svgFiles: string[], rootDir: string): Promise<string> {
+  const iconsMapping: Record<string, string> = {};
 
-  // 处理每个SVG文件
   for (const filePath of svgFiles) {
     const relativePath = relative(rootDir, filePath);
-    const iconKey = relativePath.replace(/\\|\//g, "-").replace(/\.svg$/, "");
+    const iconKey = relativePath.replace(/\\|\//g, '-').replace(/\.svg$/, '');
 
     try {
-      // 读取SVG内容
-      const svgCode = await fs.promises.readFile(filePath, "utf8");
-      // 转换为组件
+      const svgCode = await fs.promises.readFile(filePath, 'utf8');
+      // use svgr transform svg to reactElement
       const componentCode = await transform(svgCode, {
-        plugins: ["@svgr/plugin-jsx"],
+        plugins: ['@svgr/plugin-jsx'],
+        svgoConfig: { plugins: globalOptions.svgoOptions },
         template: (variables, { tpl }) => {
           return tpl`
-        ${variables.interfaces};
-        (${variables.props}) => (${variables.jsx})`;
+          ${variables.interfaces};
+          (${variables.props}) => (${variables.jsx})`;
         },
       });
 
-      // 转换处理，适配vite开发阶段的ESbuild
+      // for vite dev esbuild
       const res = await transformWithEsbuild(componentCode, iconKey, {
-        loader: "jsx",
+        loader: 'jsx',
       });
-      iconsObj[iconKey] = res.code;
+      iconsMapping[iconKey] = res.code;
     } catch (error) {
-      // 错误处理
-      console.log("加载svg出错error：", error);
+      // 修改 chalk 的使用方式
+      console.error(chalk.red('loading svg error:'), error);
     }
   }
 
   // 生成模块代码
   return `
-import * as React from "react";
+    import * as React from "react";
 
-// 导出对象
-const icons = {
-  ${Object.keys(iconsObj)
-    .map((key) => {
-      // 先去掉"const xxx = "前缀
-      let code = iconsObj[key].trim();
-      // 再去掉末尾的分号
-      code = code.replace(/;$/, "");
-      return `'${key}': ${code}`;
-    })
-    .join(",\n  ")}
-};
-
-export default icons;
-`;
+    const icons = {
+        ${Object.keys(iconsMapping)
+          .map(key => {
+            let code = iconsMapping[key].trim();
+            code = code.replace(/;$/, '');
+            return `'${key}': ${code}`;
+          })
+          .join(',\n  ')}
+    };
+    export default icons;
+    `;
 }
 
-export default function svgIconsPlugin(options: SvgIconsPluginOptions): Plugin {
-  const { dir } = options;
+export default function SvgEnhancePlugin(options: SvgIconsPluginOptions): Plugin {
+  Object.assign(globalOptions, options);
+  const { dir } = globalOptions;
+
+  if (!dir) {
+    throw new Error('vite-plugin-svg-icons-enhance: dir is required');
+  }
 
   return {
-    name: "vite-plugin-svg-icons-enhance",
+    name: 'vite-plugin-svg-icons-enhance',
 
     resolveId(id) {
       if (id === virtualModuleId) {
@@ -113,6 +126,7 @@ export default function svgIconsPlugin(options: SvgIconsPluginOptions): Plugin {
       }
     },
 
+    // resolveId hook结束后调用
     async load(id) {
       if (id === resolvedVirtualModuleId) {
         const svgFiles = scanSvgFiles(dir);
@@ -123,13 +137,10 @@ export default function svgIconsPlugin(options: SvgIconsPluginOptions): Plugin {
       }
     },
 
-    // 支持热更新
+    // HRM
     handleHotUpdate({ server, file }) {
-      if (file.endsWith(".svg") && file.includes(dir)) {
-        // 当SVG文件改变时通知客户端更新
-        const module = server.moduleGraph.getModuleById(
-          resolvedVirtualModuleId
-        );
+      if (file.endsWith('.svg') && file.includes(dir)) {
+        const module = server.moduleGraph.getModuleById(resolvedVirtualModuleId);
         if (module) {
           server.moduleGraph.invalidateModule(module);
           return [module];
