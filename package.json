@@ -4,6 +4,10 @@
   "description": "vite-plugin-svg-icons-enhance,use in vite project,auto generate svg icons react component",
   "main": "index.ts",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KimSohyun/vite-plugin-svg-icons-enhance.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
