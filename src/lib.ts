@@ -1,13 +1,13 @@
-import fs, { readdirSync } from 'fs';
-import path, { relative, resolve } from 'path';
-import chalk from 'chalk';
-import { globalOptions, SvgIconsPluginOptions } from '.';
-import { optimize } from 'svgo';
-import { customAlphabet } from 'nanoid';
 import { transform } from '@svgr/core';
+import chalk from 'chalk';
+import fs, { readdirSync } from 'fs';
+import { customAlphabet } from 'nanoid';
+import path, { relative } from 'path';
+import { optimize } from 'svgo';
 import { transformWithEsbuild } from 'vite';
-export type Framework = 'vue' | 'react' | 'unknown';
 import { compileTemplate } from 'vue/compiler-sfc';
+import { globalOptions, SvgIconsPluginOptions } from '.';
+export type Framework = 'vue' | 'react' | 'unknown';
 
 const nanoid = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 10);
 
@@ -160,7 +160,20 @@ export async function generateVueExports(svgFiles: string[], rootDir: string): P
   // );
 
   // 生成简化的代码，避免任何语法问题
-  return `import { createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
+  return `import { 
+            createElementVNode as _createElementVNode, 
+            openBlock as _openBlock, 
+            createElementBlock as _createElementBlock, 
+            createStaticVNode as _createStaticVNode,
+            createCommentVNode as _createCommentVNode,
+            createTextVNode as _createTextVNode,
+            toDisplayString as _toDisplayString,
+            Fragment as _Fragment,
+            renderList as _renderList,
+            normalizeClass as _normalizeClass,
+            normalizeStyle as _normalizeStyle,
+            withCtx as _withCtx,
+            } from "vue";
           const icons = {};
           ${Object.keys(componentMap)
             .map(

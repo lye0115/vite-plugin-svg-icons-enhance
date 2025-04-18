@@ -1,13 +1,7 @@
-import { customAlphabet } from "nanoid";
-import { Config } from "svgo";
-import { Plugin } from "vite";
-import {
-  detectFramework,
-  Framework,
-  generateReactExports,
-  generateVueExports,
-  scanSvgFiles,
-} from "./lib";
+import { customAlphabet } from 'nanoid';
+import { Config } from 'svgo';
+import { Plugin } from 'vite';
+import { detectFramework, Framework, generateReactExports, generateVueExports, scanSvgFiles } from './lib';
 
 export interface SvgIconsPluginOptions {
   dir: string;
@@ -16,38 +10,41 @@ export interface SvgIconsPluginOptions {
   svgoOptions?: Config;
 }
 
-const virtualModuleId = "virtual:svg-icons-enhance";
+const virtualModuleId = 'virtual:svg-icons-enhance';
 
 // 虚拟模块的ID,vite
-const resolvedVirtualModuleId = "\0" + virtualModuleId;
+const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 export const globalOptions: SvgIconsPluginOptions = {
-  dir: "",
+  dir: '',
   log: false,
-  svgoOptions: [
-    {
-      name: "preset-default",
-      params: {
-        overrides: {
-          removeViewBox: false,
+  svgoOptions: {
+    plugins: [
+      {
+        name: 'preset-default',
+        params: {
+          overrides: {
+            inlineStyles: {
+              onlyMatchedOnce: false,
+            },
+            removeViewBox: false,
+          },
         },
       },
-    },
-  ],
+    ],
+  },
 } as SvgIconsPluginOptions;
 
-export default function SvgEnhancePlugin(
-  options: SvgIconsPluginOptions
-): Plugin {
+export default function SvgEnhancePlugin(options: SvgIconsPluginOptions): Plugin {
   Object.assign(globalOptions, options);
   const { dir } = globalOptions;
 
   if (!dir) {
-    throw new Error("vite-plugin-svg-icons-enhance: dir is required");
+    throw new Error('vite-plugin-svg-icons-enhance: dir is required');
   }
 
   return {
-    name: "vite-plugin-svg-icons-enhance",
+    name: 'vite-plugin-svg-icons-enhance',
 
     resolveId(id) {
       if (id === virtualModuleId) {
@@ -59,13 +56,10 @@ export default function SvgEnhancePlugin(
     async load(id) {
       if (id === resolvedVirtualModuleId) {
         const framework = detectFramework();
-        if (framework === "unknown") return;
+        if (framework === 'unknown') return;
         globalOptions.framework = framework;
         const svgFiles = scanSvgFiles(dir, globalOptions);
-        const generatedCode =
-          framework === "vue"
-            ? await generateVueExports(svgFiles, dir)
-            : await generateReactExports(svgFiles, dir);
+        const generatedCode = framework === 'vue' ? await generateVueExports(svgFiles, dir) : await generateReactExports(svgFiles, dir);
         return {
           code: generatedCode,
         };
@@ -74,10 +68,8 @@ export default function SvgEnhancePlugin(
 
     // HRM
     handleHotUpdate({ server, file }) {
-      if (file.endsWith(".svg") && file.includes(dir)) {
-        const module = server.moduleGraph.getModuleById(
-          resolvedVirtualModuleId
-        );
+      if (file.endsWith('.svg') && file.includes(dir)) {
+        const module = server.moduleGraph.getModuleById(resolvedVirtualModuleId);
         if (module) {
           server.moduleGraph.invalidateModule(module);
           return [module];
