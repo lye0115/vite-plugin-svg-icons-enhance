@@ -37,6 +37,7 @@ export const globalOptions: SvgIconsPluginOptions = {
 
 export default function SvgEnhancePlugin(options: SvgIconsPluginOptions): Plugin {
   Object.assign(globalOptions, options);
+  globalOptions.log && console.log('[vite-plugin-svg-icons-enhance]: 当前全局配置为:', JSON.stringify(globalOptions));
   const { dir } = globalOptions;
 
   if (!dir) {

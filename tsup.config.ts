@@ -11,4 +11,5 @@ export default defineConfig({
   dts: true,
   outDir: 'dist',
   tsconfig: 'tsconfig.json',
+  minify: 'terser',
 });

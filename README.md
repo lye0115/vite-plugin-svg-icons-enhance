@@ -11,10 +11,6 @@
   提供了一种简单高效的方式来管理和使用 SVG 图标，支持 React 和 Vue，内置 SVGO 优化
 </p>
 
-<p align="center">
-  <a href="https://github.com/yourusername/vite-plugin-svg-icons-enhance">仓库地址</a>
-</p>
-
 ## ✨ 特性
 
 - 🔍 **自动扫描** - 递归扫描指定目录及其子目录下的所有 SVG 文件
