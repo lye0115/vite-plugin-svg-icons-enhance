@@ -57,10 +57,10 @@ export default defineConfig({
     SvgEnhancePlugin({
       // SVG 图标所在目录，必填
       dir: resolve(__dirname, 'src/assets/icons'),
-      // 是否在控制台输出日志信息，默认 false
+      // 是否在控制台输出日志信息，默认 false,可选
       log: true,
-      // 框架类型，会自动检测，也可以手动指定
-      framework: 'auto', // 'react' | 'vue' | 'auto'
+      // 框架类型，不填会自动检测，也可以手动指定
+      framework: 'react', // 'react' | 'vue'
       // SVGO 优化选项，可选
       svgoOptions: [
         {
