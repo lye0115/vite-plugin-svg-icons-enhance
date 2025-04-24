@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-svg-icons-enhance",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "vite-plugin-svg-icons-enhance,use in vite project,auto generate svg icons react component",
   "main": "index.ts",
   "type": "module",
@@ -32,8 +32,8 @@
     "svg-icons",
     "react-svg-component"
   ],
-  "author": "KimSohyun Lee",
-  "license": "ISC",
+  "author": "lye0115",
+  "license": "MIT",
   "files": [
     "dist/index.js",
     "dist/index.d.ts",
