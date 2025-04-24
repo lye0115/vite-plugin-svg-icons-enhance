@@ -11,7 +11,7 @@ on: # 定义触发工作流的事件
 jobs: # 定义工作流中要执行的任务
   npm-publish: # 定义一个名为npm-publish的任务
     name: npm publish # 设置任务的显示名称
-    runs-on: ubuntu-latest # 指定运行任务的虚拟环境为最新版Ubuntu
+    runs-on: macos-latest # 指定运行任务的虚拟环境为最新版Ubuntu
 
     steps: # 定义任务中的步骤序列
       - name: Checkout code # 第一步：检出代码
