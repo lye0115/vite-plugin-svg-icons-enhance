@@ -24,7 +24,7 @@ jobs: # 定义工作流中要执行的任务
           registry-url: 'https://registry.npmjs.org/' # 设置npm注册表URL
 
       - name: Setup pnpm # 第三步：设置pnpm包管理器
-        uses: pnpm/action-setup@v2 # 使用pnpm官方的action-setup的v2版本
+        uses: pnpm/action-setup@v4 # 使用pnpm官方的action-setup的v2版本
         with: # 配置参数
           version: 9 # 指定pnpm版本为8
 
