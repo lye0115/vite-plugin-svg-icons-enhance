@@ -6,7 +6,7 @@ name: NPM Publish # 定义工作流的名称，在GitHub Actions界面中显示
 on: # 定义触发工作流的事件
   push: # 当推送到仓库时触发
     tags: # 仅在推送标签时触发
-      - "v*" # 仅匹配以'v'开头的标签，如v1.0.0
+      - 'v*' # 仅匹配以'v'开头的标签，如v1.0.0
 
 jobs: # 定义工作流中要执行的任务
   npm-publish: # 定义一个名为npm-publish的任务
@@ -20,13 +20,13 @@ jobs: # 定义工作流中要执行的任务
       - name: Setup Node.js # 第二步：设置Node.js环境
         uses: actions/setup-node@v4 # 使用官方的setup-node action的v4版本
         with: # 配置参数
-          node-version: "18" # 指定Node.js版本为18
-          registry-url: "https://registry.npmjs.org/" # 设置npm注册表URL
+          node-version: '18' # 指定Node.js版本为18
+          registry-url: 'https://registry.npmjs.org/' # 设置npm注册表URL
 
       - name: Setup pnpm # 第三步：设置pnpm包管理器
         uses: pnpm/action-setup@v2 # 使用pnpm官方的action-setup的v2版本
         with: # 配置参数
-          version: 8 # 指定pnpm版本为8
+          version: 9 # 指定pnpm版本为8
 
       - name: Install dependencies # 第四步：安装项目依赖
         run: pnpm install # 运行pnpm install命令安装依赖

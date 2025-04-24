@@ -412,7 +412,3 @@ SvgEnhancePlugin({
 ## 🤝 贡献
 
 欢迎提交问题和贡献代码！
-
-## 📜 许可证
-
-[ISC License](LICENSE)
