@@ -17,6 +17,18 @@ jobs: # 定义工作流中要执行的任务
       - name: Checkout code # 第一步：检出代码
         uses: actions/checkout@v4 # 使用官方的checkout action的v4版本
 
+      - name: Clear cache # 在安装依赖前清理缓存
+        run: |
+          gh extension install actions/gh-actions-cache
+
+          REPO=${{ github.repository }}
+          BRANCH=${{ github.ref }}
+
+          echo "Deleting cache..."
+          gh actions-cache delete --repo $REPO --branch $BRANCH --all
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Node.js # 第二步：设置Node.js环境
         uses: actions/setup-node@v4 # 使用官方的setup-node action的v4版本
         with: # 配置参数
